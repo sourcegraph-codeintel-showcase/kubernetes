@@ -1,0 +1,21 @@
+name: Build and index LSIF
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build-and-index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Build generated packages
+        run: |
+          make
+      - name: Generate LSIF data
+        uses: sourcegraph/lsif-go-action@master
+        with:
+          verbose: "true"
+      - name: Upload LSIF data to sourcegraph.com
+        uses: sourcegraph/lsif-upload-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
